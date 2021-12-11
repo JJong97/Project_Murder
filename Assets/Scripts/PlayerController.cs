@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    Animator anim;
+
     // 스피드 조정 변수
     [SerializeField]
     private float walkSpeed;
@@ -46,6 +48,8 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
+        anim = GetComponentInChildren<Animator>();
+
         //theCamera = FindObjectOfType<Camera>();
         capsuleCollider = GetComponent<CapsuleCollider>();
         myRigid = GetComponent<Rigidbody>();
@@ -133,6 +137,7 @@ public class PlayerController : MonoBehaviour
             
         isRun = true;
         applySpeed = runSpeed;
+        anim.SetBool("isRun", true);
     }
 
     // 달리기 취소
@@ -140,6 +145,7 @@ public class PlayerController : MonoBehaviour
     {
         isRun = false;
         applySpeed = walkSpeed;
+        anim.SetBool("isRun", false);
     }
 
     // 앉기 시도
@@ -180,6 +186,13 @@ public class PlayerController : MonoBehaviour
         Vector3 _velocity = (_moveHorizontal + _moveVertical).normalized * applySpeed;
 
         myRigid.MovePosition(transform.position + _velocity * Time.deltaTime);
+        //이게 맞는건지 모르겟다
+        if(_moveDirZ >= 0.01f)
+        {
+            anim.SetBool("isWalk", true);
+            return;
+        }
+        anim.SetBool("isWalk", false);
     }
 
     // 좌우 캐릭터 회전
