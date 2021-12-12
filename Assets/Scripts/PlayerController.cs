@@ -103,7 +103,10 @@ public class PlayerController : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.Space) && isGround) {
             Jump();
+            anim.SetBool("isJump", true);
+            return;
         }
+        anim.SetBool("isJump", false);
     }
 
     // 점프
@@ -120,7 +123,7 @@ public class PlayerController : MonoBehaviour
     // 달리기 시도
     private void TryRun()
     {
-        if(Input.GetKey(KeyCode.LeftShift)) {
+        if(Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.LeftShift)) {
             Running();
         } 
         else if(Input.GetKeyUp(KeyCode.LeftShift)) {
@@ -187,12 +190,30 @@ public class PlayerController : MonoBehaviour
 
         myRigid.MovePosition(transform.position + _velocity * Time.deltaTime);
         //이게 맞는건지 모르겟다
-        if(_moveDirZ >= 0.01f)
+        if (_moveDirZ >= 0.1f)
         {
             anim.SetBool("isWalk", true);
             return;
         }
+        else if (_moveDirZ <= -0.1f)
+        {
+            anim.SetBool("isBack", true);
+            return;
+        }
+        else if (_moveDirX >= 0.1f)
+        {
+            anim.SetBool("isRight", true);
+            return;
+        }
+        else if (_moveDirX <= -0.1f)
+        {
+            anim.SetBool("isLeft", true);
+            return;
+        }
         anim.SetBool("isWalk", false);
+        anim.SetBool("isBack", false);
+        anim.SetBool("isRight", false);
+        anim.SetBool("isLeft", false);
     }
 
     // 좌우 캐릭터 회전
