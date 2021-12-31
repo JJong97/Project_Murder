@@ -32,7 +32,7 @@ public class PressKeyOpenDoor : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.E))
+        if (Input.GetKeyDown(KeyCode.F))
         {
             if (Action == true)
             {
@@ -40,6 +40,13 @@ public class PressKeyOpenDoor : MonoBehaviour
                 AnimeOject.GetComponent<Animator>().Play("DoorOpen");
                 ThisTrigger.SetActive(false);
                 Action = false;
+            }
+            if (Action == false)
+            {
+                Instruction.SetActive(true);
+                AnimeOject.GetComponent<Animator>().Play("DoorClose");
+                ThisTrigger.SetActive(true);
+                Action = true;
             }
         }
     }

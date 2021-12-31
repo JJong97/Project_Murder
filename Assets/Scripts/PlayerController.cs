@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     Animator anim;
-
+  
     // 스피드 조정 변수
     [SerializeField]
     private float walkSpeed;
@@ -215,6 +215,7 @@ public class PlayerController : MonoBehaviour
         anim.SetBool("isRight", false);
         anim.SetBool("isLeft", false);
     }
+
 
     // 좌우 캐릭터 회전
     private void CharacterRotation()
