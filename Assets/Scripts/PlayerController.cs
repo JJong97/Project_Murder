@@ -37,18 +37,24 @@ public class PlayerController : MonoBehaviour
     private float lookSensitivity;
 
     // 카메라 한계
-    [SerializeField]
-    private float cameraRotationLimit;
-    private float currentCameraRotationX = 0;
+    //[SerializeField]
+    //private float cameraRotationLimit;
+    //private float currentCameraRotationX = 0;
 
     // 필요한 컴포넌트
     [SerializeField]
     private Camera theCamera;
     private Rigidbody myRigid;
 
+    [SerializeField]
+    private Transform characterBody;
+    [SerializeField]
+    private Transform cameraArm;
+
     void Start()
     {
-        anim = GetComponentInChildren<Animator>();
+        anim = characterBody.GetComponent<Animator>();
+        //anim = GetComponentInChildren<Animator>();
 
         //theCamera = FindObjectOfType<Camera>();
         capsuleCollider = GetComponent<CapsuleCollider>();
@@ -180,7 +186,7 @@ public class PlayerController : MonoBehaviour
     // 움직임 실행
     private void Move()
     {
-        float _moveDirX = Input.GetAxisRaw("Horizontal");
+        /*float _moveDirX = Input.GetAxisRaw("Horizontal");
         float _moveDirZ = Input.GetAxisRaw("Vertical");
 
         Vector3 _moveHorizontal = transform.right * _moveDirX;
@@ -210,10 +216,25 @@ public class PlayerController : MonoBehaviour
             anim.SetBool("isLeft", true);
             return;
         }
-        anim.SetBool("isWalk", false);
+        //anim.SetBool("isWalk", false);
         anim.SetBool("isBack", false);
         anim.SetBool("isRight", false);
-        anim.SetBool("isLeft", false);
+        anim.SetBool("isLeft", false);*/
+
+        Vector2 moveInput = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+        bool isWalk = moveInput.magnitude != 0;
+        anim.SetBool("isWalk", isWalk);
+        if(isWalk)
+        {
+            Vector3 lookForward = new Vector3(cameraArm.forward.x, 0f, cameraArm.forward.z).normalized;
+            Vector3 lookRight = new Vector3(cameraArm.right.x, 0f, cameraArm.right.z).normalized;
+            Vector3 moveDir = lookForward * moveInput.y + lookRight * moveInput.x;
+
+            characterBody.forward = /*moveDir;*/lookForward;
+            transform.position += moveDir * Time.deltaTime * 5f;
+        }
+
+            Debug.DrawRay(cameraArm.position, new Vector3(cameraArm.forward.x, 0f, cameraArm.forward.z).normalized, Color.red);
     }
 
 
@@ -228,11 +249,25 @@ public class PlayerController : MonoBehaviour
     // 상하 카메라 회전
     private void CameraRotation()
     {
-        float _xRotation = Input.GetAxisRaw("Mouse Y");
+        Vector2 mouseDelta = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
+        Vector3 camAngle = cameraArm.rotation.eulerAngles;
+        float x = camAngle.x - mouseDelta.y;
+
+        if(x < 180f)
+        {
+            x = Mathf.Clamp(x, -1f, 70f);
+        }
+        else
+        {
+            x = Mathf.Clamp(x, 335f, 361f);
+        }
+
+        cameraArm.rotation = Quaternion.Euler(camAngle.x - mouseDelta.y, + camAngle.y + mouseDelta.x, camAngle.z);
+        /*float _xRotation = Input.GetAxisRaw("Mouse Y");
         float _cameraRotationX = _xRotation * lookSensitivity;
         currentCameraRotationX -= _cameraRotationX;
         currentCameraRotationX = Mathf.Clamp(currentCameraRotationX, -cameraRotationLimit, cameraRotationLimit);
 
-        theCamera.transform.localEulerAngles = new Vector3(currentCameraRotationX, 0f, 0f);
+        theCamera.transform.localEulerAngles = new Vector3(currentCameraRotationX, 0f, 0f);*/
     }
 }
